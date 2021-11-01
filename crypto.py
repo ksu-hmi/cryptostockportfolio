@@ -11,7 +11,7 @@ import requests_cache
 
 
 def get_price(coin, curr='USD'):
-    #Get the data on a user specified coin using the cryptocompare website API
+    #Get the data on a user specified coin from the cryptocompare website API
     
     fmt = 'https://min-api.cryptocompare.com/data/pricemultifull?fsyms={}&tsyms={}&api_key=4120b66bee53ddad00260553cac1215997407f8b2abbdcb714c55a7f3240ed27'
 
