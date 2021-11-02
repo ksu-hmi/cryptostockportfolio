@@ -22,9 +22,8 @@ def get_price(coin, curr='USD'):
 
     try:
         data_raw = r.json()['RAW']
-        return [(float(data_raw[c][curr]['PRICE']),
-                 float(data_raw[c][curr]['HIGH24HOUR']),
-                 float(data_raw[c][curr]['LOW24HOUR'])) for c in coin.split(',') if c in data_raw.keys()]
+        return [(float(data_raw[c][curr]['PRICE'])) for c in coin.split(',') if c in data_raw.keys()]
+          
     except:
         sys.exit('Could not parse data')
 
