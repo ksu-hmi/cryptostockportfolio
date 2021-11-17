@@ -81,10 +81,23 @@ def portfolio_update():
 def portfolio_display():
     #displays the entire portfolio with current prices using the columnar module to generate columns
 
+    listofcrypto = []
+    
+    for lineitem in crypto_dict:
+        listofcrypto.append(lineitem)
+    listofcrypto_str = ",".join(listofcrypto)
+
+    price_list = get_price(listofcrypto_str)
+    price_list_index = 0
     headers = ["Currency", "Price", "Quantity", "Total Value"]
     data = []
+
     for lineitem in crypto_dict:
-        data.append([lineitem, 50, crypto_dict[lineitem], float(crypto_dict[lineitem])*50])
+        price = price_list[price_list_index]
+        quantity = crypto_dict[lineitem]
+        price_list_index += 1
+        data.append([lineitem, "$"+str(price), quantity, "$"+str(price*float(quantity))])
+        
     table = columnar(data, headers, no_borders=True)
     print(table)
 
@@ -102,8 +115,6 @@ portfolio_update()
 print(crypto_dict)
 portfolio_display()
 
-#testing potential crypto porfolio display code
-#for lineitem in crypto_dict:
-#    print(crypto_dict[lineitem])
+
 
 
