@@ -1,6 +1,23 @@
 import json
 import requests
 from columnar import columnar
+import sys
+
+def main_menu():
+    while True:
+        main_menu_response = input("\nChoose from any of the following options: \nA (Add crypto), R (remove crypto), U (Update crypto), D (Display portfolio), Q (Quit): ")
+        if main_menu_response.upper().startswith("A"):
+            portfolio_add()
+        elif main_menu_response.upper().startswith("R"):
+            portfolio_remove()
+        elif main_menu_response.upper().startswith("U"):
+            portfolio_update()
+        elif main_menu_response.upper().startswith("D"):
+            portfolio_display()
+        elif main_menu_response.upper().startswith("Q"):
+            exit()
+        else:
+            print("Invalid response.")
 
 def get_price(coin, curr='USD'):
     #Get the data on a user specified coin from the cryptocompare website API
@@ -41,6 +58,7 @@ def portfolio_add():
             return
    
     crypto_dict[coin_add] = amount_add
+    print(str(amount_add), coin_add, "added to portfolio.")
 
 def portfolio_remove():
     #remove user specified crypto from portfolio
@@ -54,6 +72,7 @@ def portfolio_remove():
         if coin_remove.upper() == "Q":
             return
     del crypto_dict[coin_remove]
+    print(coin_remove, "removed from portfolio.")
 
 def portfolio_update():
     #update amount held of user specified crypto in portfolio
@@ -77,6 +96,7 @@ def portfolio_update():
             return
 
     crypto_dict[coin_update] = coin_amount
+    print(coin_update, "updated to", str(coin_amount))
 
 def portfolio_display():
     #displays the entire portfolio with current prices using the columnar module to generate columns
@@ -97,23 +117,19 @@ def portfolio_display():
         quantity = crypto_dict[lineitem]
         price_list_index += 1
         data.append([lineitem, "$"+str(price), quantity, "$"+str(price*float(quantity))])
-        
+
     table = columnar(data, headers, no_borders=True)
     print(table)
 
 #example call to print the price of Bitcoin (symbol BTC)
 #print(get_price('BTC,ETH'))
 
+print("Welcome to the Crypto Portfolio Display App")
+
 #main menu functions, testing the calls
-crypto_dict = {"BTC":2}
-print(crypto_dict)
-portfolio_add()
-print(crypto_dict)
-portfolio_remove()
-print(crypto_dict)
-portfolio_update()
-print(crypto_dict)
-portfolio_display()
+crypto_dict = {}
+main_menu()
+
 
 
 
