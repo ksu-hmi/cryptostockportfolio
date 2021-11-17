@@ -2,6 +2,7 @@ import json
 import requests
 from columnar import columnar
 import sys
+import re
 
 def main_menu():
     while True:
@@ -51,7 +52,7 @@ def portfolio_add():
     amount_add = input("Enter amount held for " + coin_add + " , Q to go back: ")
     if amount_add.upper() == "Q":
         return
-    while amount_add.isdigit() == False:
+    while re.search("[^0-9^.]", amount_add):
         print("Invalid entry")
         amount_add = input("Enter amount held for " + coin_add + " , Q to go back: ")
         if amount_add.upper() == "Q":
@@ -71,6 +72,7 @@ def portfolio_remove():
         coin_remove = input("Enter crypto symbol to remove from portfolio (E.G. BTC), Q to go back: ").upper()
         if coin_remove.upper() == "Q":
             return
+    
     del crypto_dict[coin_remove]
     print(coin_remove, "removed from portfolio.")
 
@@ -89,7 +91,7 @@ def portfolio_update():
     coin_amount = input("Enter amount held for " + coin_update + " , Q to go back: ")
     if coin_amount.upper() == "Q":
         return
-    while coin_amount.isdigit() == False:
+    while re.search("[^0-9^.]", coin_amount):
         print("Invalid entry")
         coin_amount = input("Enter amount held for " + coin_update + " , Q to go back: ")
         if coin_amount.upper() == "Q":
@@ -121,13 +123,10 @@ def portfolio_display():
     table = columnar(data, headers, no_borders=True)
     print(table)
 
-#example call to print the price of Bitcoin (symbol BTC)
-#print(get_price('BTC,ETH'))
-
 print("Welcome to the Crypto Portfolio Display App")
 
-#main menu functions, testing the calls
 crypto_dict = {}
+
 main_menu()
 
 
