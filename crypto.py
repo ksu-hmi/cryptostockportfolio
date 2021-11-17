@@ -113,15 +113,19 @@ def portfolio_display():
     price_list_index = 0
     headers = ["Currency", "Price", "Quantity", "Total Value"]
     data = []
+    total_portfolio_value = 0
 
     for lineitem in crypto_dict:
         price = price_list[price_list_index]
-        quantity = crypto_dict[lineitem]
         price_list_index += 1
-        data.append([lineitem, "$"+str(price), quantity, "$"+str(price*float(quantity))])
+        quantity = crypto_dict[lineitem]
+        total_value = price*float(quantity)
+        total_portfolio_value += total_value
+        data.append([lineitem, "$"+str(price), quantity, "$"+str(total_value)])
 
     table = columnar(data, headers, no_borders=True)
     print(table)
+    print("TOTAL PORTFOLIO VALUE: " + "$" + str(total_portfolio_value))
 
 print("Welcome to the Crypto Portfolio Display App")
 
