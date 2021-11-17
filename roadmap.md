@@ -5,11 +5,11 @@
  - Added the top ten bitcoin prices that can be used to see the trend for data analysis.
 
 ## Build a crypto currency portfolio App with Python
- - Create functions to add, remove, and update crypto holdings
+ - Create functions to add, remove, and update crypto holdings DONE
  - The roadmap will be to build a python App that goes and looks up current pricees of different cryptocurrencies and then output the results on the screen.
 
 ### We will do it in a couple of difference ways:
- - (1) From the command line by just using straightup python code
+ - (1) From the command line by just using straightup python code DONE
  - (2) Build a GUI Desktop App
 
 # STOCK Roadmap
