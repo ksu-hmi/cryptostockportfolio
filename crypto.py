@@ -1,6 +1,6 @@
 import json
-from tkinter.constants import FALSE
 import requests
+from columnar import columnar
 
 def get_price(coin, curr='USD'):
     #Get the data on a user specified coin from the cryptocompare website API
@@ -34,15 +34,13 @@ def portfolio_add():
     amount_add = input("Enter amount held for " + coin_add + " , Q to go back: ")
     if amount_add.upper() == "Q":
         return
-    while amount_add.isdigit() == FALSE:
+    while amount_add.isdigit() == False:
         print("Invalid entry")
         amount_add = input("Enter amount held for " + coin_add + " , Q to go back: ")
-        if coin_amount.upper() == "Q":
+        if amount_add.upper() == "Q":
             return
    
     crypto_dict[coin_add] = amount_add
-
-
 
 def portfolio_remove():
     #remove user specified crypto from portfolio
@@ -72,7 +70,7 @@ def portfolio_update():
     coin_amount = input("Enter amount held for " + coin_update + " , Q to go back: ")
     if coin_amount.upper() == "Q":
         return
-    while coin_amount.isdigit() == FALSE:
+    while coin_amount.isdigit() == False:
         print("Invalid entry")
         coin_amount = input("Enter amount held for " + coin_update + " , Q to go back: ")
         if coin_amount.upper() == "Q":
@@ -80,6 +78,15 @@ def portfolio_update():
 
     crypto_dict[coin_update] = coin_amount
 
+def portfolio_display():
+    #displays the entire portfolio with current prices using the columnar module to generate columns
+
+    headers = ["Currency", "Price", "Quantity", "Total Value"]
+    data = []
+    for lineitem in crypto_dict:
+        data.append([lineitem, 50, crypto_dict[lineitem], float(crypto_dict[lineitem])*50])
+    table = columnar(data, headers, no_borders=True)
+    print(table)
 
 #example call to print the price of Bitcoin (symbol BTC)
 #print(get_price('BTC,ETH'))
@@ -93,6 +100,7 @@ portfolio_remove()
 print(crypto_dict)
 portfolio_update()
 print(crypto_dict)
+portfolio_display()
 
 #testing potential crypto porfolio display code
 #for lineitem in crypto_dict:
