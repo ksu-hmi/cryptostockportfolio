@@ -3,10 +3,11 @@ import requests
 from columnar import columnar
 import sys
 import re
+import os
 
 def main_menu():
     while True:
-        main_menu_response = input("\nChoose from any of the following options: \nA (Add crypto), R (remove crypto), U (Update crypto), D (Display portfolio), Q (Quit): ")
+        main_menu_response = input("\nChoose from any of the following options: \nA (Add crypto), R (remove crypto), U (Update crypto), D (Display portfolio), L (Load portfolio), S (Save portfolio) Q (Quit): ")
         if main_menu_response.upper().startswith("A"):
             portfolio_add()
         elif main_menu_response.upper().startswith("R"):
@@ -16,7 +17,12 @@ def main_menu():
         elif main_menu_response.upper().startswith("D"):
             portfolio_display()
         elif main_menu_response.upper().startswith("Q"):
+            print("Thank you for using the Crypto Portfolio Display App. Have a nice day!")
             exit()
+        elif main_menu_response.upper().startswith("S"):
+            portfolio_save()
+        elif main_menu_response.upper().startswith("L"):
+            portfolio_load()
         else:
             print("Invalid response.")
 
@@ -127,11 +133,78 @@ def portfolio_display():
     print(table)
     print("TOTAL PORTFOLIO VALUE: " + "$" + str(total_portfolio_value))
 
+def portfolio_save():
+    #can save multiple portfolios to a single text file (savedportfolios.txt) with identifier tags to distinguish each
+
+    portfolio_name = input("Enter a name for the portfolio (no special characters) type \"Cancel\" to go back: ")
+    if portfolio_name.upper() == "CANCEL":
+        return
+    
+    #read in the saved portfolios file or create a new one if it doesn't already exist
+    savedportfolios_file = open(os.path.join(sys.path[0], "savedportfolios.txt"), "a+")
+    savedportfolios_file.seek(0)
+    savedportfolio_contents = savedportfolios_file.read().splitlines()
+    savedportfolios_file.close()
+
+    #check if the user selected portfolio name already exists in the file, ask user for overwrite if true
+    while ("@Begin" + portfolio_name.upper()) in savedportfolio_contents:
+        askforoverwrite =  input(str(portfolio_name) + " portfolio already exists, would you like to overwrite it? (Y/N) Type \"Cancel\" to go back: ")
+        if askforoverwrite.upper() == "CANCEL":
+            return
+        while askforoverwrite[0] not in ("yYnN"):
+            print("Invalid response") 
+            askforoverwrite =  input(str(portfolio_name) + " portfolio already exists, would you like to overwrite it? (Y/N) Type \"Cancel\" to go back: ")
+            if askforoverwrite.upper() == "CANCEL":
+                return
+            else:
+                pass
+        
+        if askforoverwrite.upper().startswith("Y") == True:
+            #Find the index where the existing portfolio to be overwritten is located in the file
+            
+            saved_portfolio_index = 0
+            for line in savedportfolio_contents:
+                if line == "@Begin" + portfolio_name.upper():
+                    portfolio_index_begin = saved_portfolio_index
+                elif line == "@End" + portfolio_name.upper():
+                    portfolio_index_end = saved_portfolio_index
+                else:
+                    pass
+                saved_portfolio_index += 1
+            
+            #Using the index, delete the portion of the file selected to be overwritten and write brand new file (technically not overwriting)
+                
+            del savedportfolio_contents[portfolio_index_begin:portfolio_index_end+1]  
+            savedportfolios_file = open(os.path.join(sys.path[0], "savedportfolios.txt"), "w+")
+            for line in savedportfolio_contents:
+                savedportfolios_file.writelines(line+"\n")
+            savedportfolios_file.close()
+            print(portfolio_name, "overwritten")
+            break
+        else:
+            portfolio_name = input("Enter a name for the portfolio (no special characters) type \"Cancel\" to go back: ")
+            if portfolio_name.upper() == "CANCEL":
+                return
+
+    #The main part of the save function which appends the new user created portfolio to the existing text file
+    savedportfolios_file = open(os.path.join(sys.path[0], "savedportfolios.txt"), "a+")
+    savedportfolios_file.writelines("@Begin" + portfolio_name.upper() + "\n")
+
+    for lineitem in crypto_dict:
+        savedportfolios_file.writelines(lineitem + " " + crypto_dict[lineitem] + "\n")
+
+    savedportfolios_file.writelines("@End" + portfolio_name.upper() + "\n")
+    savedportfolios_file.close()
+
+
+
 print("Welcome to the Crypto Portfolio Display App")
 
 crypto_dict = {}
 
 main_menu()
+
+#print(sys.path[0])
 
 
 
