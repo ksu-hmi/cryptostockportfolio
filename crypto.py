@@ -21,8 +21,9 @@ def main_menu():
             exit()
         elif main_menu_response.upper().startswith("S"):
             portfolio_save()
-        elif main_menu_response.upper().startswith("L"):
-            portfolio_load()
+        #elif main_menu_response.upper().startswith("L"):
+           #not yet operational
+            #portfolio_load()
         else:
             print("Invalid response.")
 
@@ -50,7 +51,7 @@ def portfolio_add():
     if coin_add.upper() == "Q":
         return
     while coin_add in crypto_dict:
-        print(coin_add, "already exists in portfolio.")
+        print(coin_add, "already exists in portfolio. Use the Update function in the main menu to change amount held.")
         coin_add = input("Enter crypto symbol to add to portfolio (E.G. BTC), Q to go back: ").upper()
         if coin_add.upper() == "Q":
             return
@@ -63,7 +64,8 @@ def portfolio_add():
         amount_add = input("Enter amount held for " + coin_add + " , Q to go back: ")
         if amount_add.upper() == "Q":
             return
-   
+    
+    #this is what actually adds the user selected crypto to the portfolio (crypto_dict)
     crypto_dict[coin_add] = amount_add
     print(str(amount_add), coin_add, "added to portfolio.")
 
@@ -79,6 +81,7 @@ def portfolio_remove():
         if coin_remove.upper() == "Q":
             return
     
+    #this is what actually removes the user selected crypto from the portfolio (crypto_dict)
     del crypto_dict[coin_remove]
     print(coin_remove, "removed from portfolio.")
 
@@ -103,6 +106,7 @@ def portfolio_update():
         if coin_amount.upper() == "Q":
             return
 
+    #this is what actually updates the amount of currency held in the portfolio (crypto_dict)
     crypto_dict[coin_update] = coin_amount
     print(coin_update, "updated to", str(coin_amount))
 
@@ -111,11 +115,16 @@ def portfolio_display():
 
     listofcrypto = []
     
+    #compiles the crypto symbols in the portfolio into one comma separated list
     for lineitem in crypto_dict:
         listofcrypto.append(lineitem)
     listofcrypto_str = ",".join(listofcrypto)
 
+    #feeds all of the crypto symbols in the portfolio into one API request in the get_price function
     price_list = get_price(listofcrypto_str)
+    
+    #creates the portfolio (data) as a list with every line being a separate list (a list within a list)
+    #each list entry has four values: currency, price, quantity, and total value
     price_list_index = 0
     headers = ["Currency", "Price", "Quantity", "Total Value"]
     data = []
@@ -129,6 +138,7 @@ def portfolio_display():
         total_portfolio_value += total_value
         data.append([lineitem, "$"+str(price), quantity, "$"+str(total_value)])
 
+    #this is what actually displays the portfolio in a clean column format using columnar module
     table = columnar(data, headers, no_borders=True)
     print(table)
     print("TOTAL PORTFOLIO VALUE: " + "$" + str(total_portfolio_value))
@@ -200,11 +210,11 @@ def portfolio_save():
 
 print("Welcome to the Crypto Portfolio Display App")
 
+#blank portfolio (dictionary format) created here and is built up in the functions above
 crypto_dict = {}
 
+#loads the main menu, program begins here
 main_menu()
-
-#print(sys.path[0])
 
 
 
