@@ -113,9 +113,8 @@ def portfolio_update():
 def portfolio_display():
     #displays the entire portfolio with current prices using the columnar module to generate columns
 
+    #compiles all the crypto symbols in the portfolio into one comma separated string
     listofcrypto = []
-    
-    #compiles the crypto symbols in the portfolio into one comma separated list
     for lineitem in crypto_dict:
         listofcrypto.append(lineitem)
     listofcrypto_str = ",".join(listofcrypto)
@@ -123,8 +122,8 @@ def portfolio_display():
     #feeds all of the crypto symbols in the portfolio into one API request in the get_price function
     price_list = get_price(listofcrypto_str)
     
-    #creates the portfolio (data) as a list with every line being a separate list (a list within a list)
-    #each list entry has four values: currency, price, quantity, and total value
+    #changes the portfolio (crypto_dict) into a list (data) with every crypto holding being a separate list (a list within a list)
+    #each list corresponds to one crypto asset held and has four entries: currency(symbol), price, quantity, and total value
     price_list_index = 0
     headers = ["Currency", "Price", "Quantity", "Total Value"]
     data = []
