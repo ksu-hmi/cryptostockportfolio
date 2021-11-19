@@ -6,6 +6,8 @@ import re
 import os
 
 def main_menu():
+    #The home screen, by default the program always returns here
+
     while True:
         main_menu_response = input("\nChoose from any of the following options: \nA (Add crypto), R (remove crypto), U (Update crypto), D (Display portfolio), L (Load portfolio), S (Save portfolio) Q (Quit): ")
         if main_menu_response.upper().startswith("A"):
@@ -21,9 +23,8 @@ def main_menu():
             exit()
         elif main_menu_response.upper().startswith("S"):
             portfolio_save()
-        #elif main_menu_response.upper().startswith("L"):
-           #not yet operational
-            #portfolio_load()
+        elif main_menu_response.upper().startswith("L"):
+            portfolio_load()
         else:
             print("Invalid response.")
 
@@ -119,7 +120,7 @@ def portfolio_display():
         listofcrypto.append(lineitem)
     listofcrypto_str = ",".join(listofcrypto)
 
-    #feeds all of the crypto symbols in the portfolio into one API request in the get_price function
+    #feeds all of the crypto symbols in the portfolio into one API request in the get_price function, a list of prices in the same order is returned
     price_list = get_price(listofcrypto_str)
     
     #changes the portfolio (crypto_dict) into a list (data) with every crypto holding being a separate list (a list within a list)
@@ -188,7 +189,7 @@ def portfolio_save():
             for line in savedportfolio_contents:
                 savedportfolios_file.writelines(line+"\n")
             savedportfolios_file.close()
-            print(portfolio_name, "overwritten")
+            print(portfolio_name, "has been overwritten.")
             break
         else:
             portfolio_name = input("Enter a name for the portfolio (no special characters) type \"Cancel\" to go back: ")
@@ -204,6 +205,58 @@ def portfolio_save():
 
     savedportfolios_file.writelines("@End" + portfolio_name.upper() + "\n")
     savedportfolios_file.close()
+    print(portfolio_name, "portfolio has been saved.")
+
+def portfolio_load():
+    #loads single portfolio from savedportfolios.txt
+
+    try:
+        savedportfolios_file = open(os.path.join(sys.path[0], "savedportfolios.txt"), "r")
+        savedportfolio_contents = savedportfolios_file.read().splitlines()
+        savedportfolios_file.close()
+    
+    except:
+        print("No saved portfolios were found on this computer.")
+        return
+
+    #check the file contents for portfolio name tags (@) and compile the names to a list (data)
+    data = []
+    portfolio_names_list = []
+    for line in savedportfolio_contents:
+        if line[0:6] == "@Begin":
+            data.append([line[6:]])
+            portfolio_names_list.append(line[6:])
+        else:
+            pass
+
+    #show the names of the portfolios found using columnar
+    print("We have found the following saved portfolios:")
+    headers = ['Portfolio Name']
+    table = columnar(data, headers, no_borders=True)
+    print(table)
+
+    loadportfolio_name = input("Enter the name of the portfolio you wish to load. Type \"Cancel\" to go back: ")
+    if loadportfolio_name.upper() == "CANCEL":
+        return
+    
+    while loadportfolio_name.upper() not in portfolio_names_list:
+        print("Invalid entry.")
+        loadportfolio_name = input("Enter the name of the portfolio you wish to load. Type \"Cancel\" to go back: ")
+        if loadportfolio_name.upper() == "CANCEL":
+            return
+
+    #find the portfolio index to load in the file
+    saved_portfolio_index = 0
+    for line in savedportfolio_contents:
+        if line == "@Begin" + portfolio_name.upper():
+            portfolio_index_begin = saved_portfolio_index
+        elif line == "@End" + portfolio_name.upper():
+            portfolio_index_end = saved_portfolio_index
+        else:
+            pass
+        saved_portfolio_index += 1
+
+
 
 
 
