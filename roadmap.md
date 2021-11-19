@@ -20,3 +20,5 @@
 ### (1)Tickers 
 ### (2)Start date + End date or Period 
 ### (3)Interval 
+plotly to display graph of stocks
+#import plotly
