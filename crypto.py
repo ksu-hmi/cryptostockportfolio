@@ -25,6 +25,8 @@ def main_menu():
             portfolio_save()
         elif main_menu_response.upper().startswith("L"):
             portfolio_load()
+        elif main_menu_response.upper().startswith("T"):
+            top_ten_prices()
         else:
             print("Invalid response.")
 
@@ -255,6 +257,10 @@ def portfolio_load():
         else:
             pass
         saved_portfolio_index += 1
+
+def top_ten_prices():
+    print("Here are the top ten crypto currencies by market cap:")
+    print("1  BTC  Bitcoin")
 
 
 
