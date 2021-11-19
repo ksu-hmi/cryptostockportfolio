@@ -24,7 +24,7 @@ def main_menu():
         elif main_menu_response.upper().startswith("S"):
             portfolio_save()
         elif main_menu_response.upper().startswith("L"):
-            crypto_dict = portfolio_load()
+            portfolio_load()
         elif main_menu_response.upper().startswith("T"):
             top_ten_prices()
         elif main_menu_response.upper().startswith("N"):
