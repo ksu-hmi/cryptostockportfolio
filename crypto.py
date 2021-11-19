@@ -269,6 +269,6 @@ crypto_dict = {}
 main_menu()
 
 
-
+print("test")
 
 
