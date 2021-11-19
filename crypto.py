@@ -9,7 +9,7 @@ def main_menu():
     #The home screen, by default the program always returns here
 
     while True:
-        main_menu_response = input("\nChoose from any of the following options: \nA (Add crypto), R (remove crypto), U (Update crypto), D (Display portfolio), L (Load portfolio), S (Save portfolio) Q (Quit): ")
+        main_menu_response = input("\nChoose from any of the following options: \nA (Add crypto), R (remove crypto), U (Update crypto), D (Display portfolio), L (Load portfolio), S (Save portfolio), N (New portfolio), Q (Quit): ")
         if main_menu_response.upper().startswith("A"):
             portfolio_add()
         elif main_menu_response.upper().startswith("R"):
@@ -27,6 +27,8 @@ def main_menu():
             portfolio_load()
         elif main_menu_response.upper().startswith("T"):
             top_ten_prices()
+        elif main_menu_response.upper().startswith("N"):
+            portfolio_new()
         else:
             print("Invalid response.")
 
@@ -115,6 +117,11 @@ def portfolio_update():
 
 def portfolio_display():
     #displays the entire portfolio with current prices using the columnar module to generate columns
+
+    #makes sure the portfolio to be displayed isn't empty
+    if crypto_dict == {}:
+        print("Cannot display empty portfolio.")
+        return
 
     #compiles all the crypto symbols in the portfolio into one comma separated string
     listofcrypto = []
@@ -250,21 +257,52 @@ def portfolio_load():
     #find the portfolio index to load in the file
     saved_portfolio_index = 0
     for line in savedportfolio_contents:
-        if line == "@Begin" + portfolio_name.upper():
+        if line == "@Begin" + loadportfolio_name.upper():
             portfolio_index_begin = saved_portfolio_index
-        elif line == "@End" + portfolio_name.upper():
+        elif line == "@End" + loadportfolio_name.upper():
             portfolio_index_end = saved_portfolio_index
         else:
             pass
         saved_portfolio_index += 1
+    
+    #trim savedportfolio_contents of everything except for the user selected load portfolio
+    del savedportfolio_contents[portfolio_index_end:]
+    del savedportfolio_contents[:portfolio_index_begin+1]
+
+    #load the single portfolio into crypto_dict
+    crypto_dict.clear()
+    for line in savedportfolio_contents:
+        symbol, amount = line.split(" ")
+        crypto_dict[symbol] = str(amount)
+    print(loadportfolio_name, "portfolio loaded.")
+
+def portfolio_new():
+    #ask the user to save portfolio and then completely clear the existing portfolio
+
+    askforsave = input("All unsaved data will be lost. Would you like to save the current portfolio before creating a new one? (Y/N) Type \"Cancel\" to go back: ")
+    if askforsave.upper() == "CANCEL":
+        return
+        
+    while askforsave[0] not in ("yYnN"):
+        print("Invalid response")
+        askforsave =  input("All unsaved data will be lost. Would you like to save the current portfolio before creating a new one? (Y/N) Type \"Cancel\" to go back: ")
+        if askforoverwrite.upper() == "CANCEL":
+            return
+        else:
+            pass
+        
+    if askforsave[0].upper() == "Y":
+        portfolio_save()
+    else:
+        pass
+
+    #clears portfolio
+    crypto_dict.clear()
+    print("New portfolio created.")
 
 def top_ten_prices():
     print("Here are the top ten crypto currencies by market cap:")
     print("1  BTC  Bitcoin")
-
-
-
-
 
 print("Welcome to the Crypto Portfolio Display App")
 
@@ -273,8 +311,5 @@ crypto_dict = {}
 
 #loads the main menu, program begins here
 main_menu()
-
-
-print("test")
 
 
