@@ -11,6 +11,13 @@
 ### We will do it in a couple of difference ways:
  - (1) From the command line by just using straightup python code DONE
  - (2) Build a GUI Desktop App
+ ### Progress: 
+ - (1) Created a crypto portfolio using straightup python text format
+ - (2) Created a GUI App for the crypto portfolio using Tkinter python inbuild application.
+ ### Looking Forward:
+ - (1) Discover that the CoinMarketCap.com basic plan API has some endpoint value limitations
+ - (2) Will change the API, add more functionality on the GUI App
+ - (3) Finally, will have a merge or syncronize the two crypto portfolios(crypto.py & lookup_crypto.py)
 
 # STOCK Roadmap
 
