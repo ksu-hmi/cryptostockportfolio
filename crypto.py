@@ -9,7 +9,7 @@ def main_menu():
     #The home screen, by default the program always returns here
 
     while True:
-        main_menu_response = input("\nChoose from any of the following options: \nA (Add crypto), R (remove crypto), U (Update crypto), D (Display portfolio), L (Load portfolio), S (Save portfolio), N (New portfolio), Q (Quit): ")
+        main_menu_response = input("\nChoose from any of the following options: \nA (Add crypto), R (Remove crypto), U (Update crypto), D (Display portfolio), L (Load portfolio), S (Save portfolio), N (New portfolio), Q (Quit): ")
         if main_menu_response.upper().startswith("A"):
             portfolio_add()
         elif main_menu_response.upper().startswith("R"):
@@ -49,8 +49,30 @@ def get_price(coin, curr='USD'):
     except:
         sys.exit('Could not parse data')
 
+def does_coin_exist(coin, curr='USD'):
+    #Checks whether the crypto currency actually exists using an API call
+
+    fmt = 'https://min-api.cryptocompare.com/data/pricemultifull?fsyms={}&tsyms={}&api_key=4120b66bee53ddad00260553cac1215997407f8b2abbdcb714c55a7f3240ed27'
+
+    try:
+        r = requests.get(fmt.format(coin, curr))
+    except requests.exceptions.RequestException:
+        sys.exit('Could not complete request')
+    
+    try:
+        data_raw = r.json()
+        if 'Message' in data_raw:
+            return False
+        elif 'PRICE' in data_raw['RAW'][coin][curr]:
+            return True
+        else:
+            pass
+    
+    except:
+        sys.exit('Could not parse data')
+
 def portfolio_add():
-    #add user specified crypto to portfolio
+    #add user specified crypto to portfolio after checking if the coin actually exists
 
     coin_add = input("Enter crypto symbol to add to portfolio (E.G. BTC), Q to go back: ").upper()
     if coin_add.upper() == "Q":
@@ -60,7 +82,13 @@ def portfolio_add():
         coin_add = input("Enter crypto symbol to add to portfolio (E.G. BTC), Q to go back: ").upper()
         if coin_add.upper() == "Q":
             return
-   
+
+    while does_coin_exist(coin_add) == False:
+        print(coin_add, "is not a valid cryptocurrency symbol.")
+        coin_add = input("Enter crypto symbol to add to portfolio (E.G. BTC), Q to go back: ").upper()
+        if coin_add.upper() == "Q":
+            return
+
     amount_add = input("Enter amount held for " + coin_add + " , Q to go back: ")
     if amount_add.upper() == "Q":
         return
