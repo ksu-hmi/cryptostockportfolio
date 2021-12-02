@@ -62,18 +62,18 @@ def lookup():
   my_crypto_portfolio =[
     {
       "sym": "BTC",
-      "amount_owned": 100,
+      "amount_owned": 2.5,
       "price_paid_per": 5000
     },
     {
       "sym": "XRP",
-      "amount_owned": 20000,
+      "amount_owned": 100000,
       "price_paid_per": 1.8
     },
     {
       "sym": "LUNA",
       "amount_owned": 100,
-      "price_paid_per": 30
+      "price_paid_per": .02
     },
     {
       "sym": "SHIB",
@@ -92,7 +92,7 @@ def lookup():
     },
     {
       "sym": "ADA",
-      "amount_owned": 10000,
+      "amount_owned": 130000,
       "price_paid_per": 1.5
     },
     {
@@ -128,7 +128,9 @@ def lookup():
         profit_loss_per_coin = float(crypto["quote"]["USD"]["price"])- float(coin["price_paid_per"])
         total_current_value += current_value
         pie.append(crypto["name"])
-        pie_size.append(coin["amount_owned"])
+    
+        #pie_size.append(coin["amount_owned"])
+        pie_size.append(current_value)
 
         #pprint.pprint(crypto["symbol"])
         #pprint.pprint(crypto["name"])
@@ -157,14 +159,14 @@ def lookup():
         profit_loss_per = Label(root, text="${0:.2f}".format(float(profit_loss_per_coin)), bg="white", fg= red_green(float(profit_loss_per_coin)))
         profit_loss_per.grid(row=row_count, column=4, sticky =N+S+E+W)
 
-        #one_hr_change = Label(root, text="{0:.2f}%".format(float(crypto["percent_change_1h"])), bg="silver", fg= red_green(float(crypto["percent_change_1h"])))
-        #one_hr_change.grid(row=row_count, column=5, sticky =N+S+E+W)
+        one_hr_change = Label(root, text="{0:.2f}%".format(float(crypto["quote"]["USD"]["percent_change_1h"])), bg="silver", fg= red_green(float(crypto["quote"]["USD"]["percent_change_1h"])))
+        one_hr_change.grid(row=row_count, column=5, sticky =N+S+E+W)
 
-        #twenty4_hr_change = Label(root, text="{0:.2f}%".format(float(crypto["percent_change_24h"])), bg="white", fg= red_green(float(crypto["percent_change_24h"])))
-        #twenty4_hr_change.grid(row=row_count, column=6, sticky =N+S+E+W)
+        twenty4_hr_change = Label(root, text="{0:.2f}%".format(float(crypto["quote"]["USD"]["percent_change_24h"])), bg="white", fg= red_green(float(crypto["quote"]["USD"]["percent_change_24h"])))
+        twenty4_hr_change.grid(row=row_count, column=6, sticky =N+S+E+W)
 
-        #seven_day_change = Label(root, text="{0:.2f}%".format(float(crypto["percent_change_7d"])), bg="silver", fg= red_green(float(crypto["percent_change_7d"])))
-        #seven_day_change.grid(row=row_count, column=7, sticky =N+S+E+W)
+        seven_day_change = Label(root, text="{0:.2f}%".format(float(crypto["quote"]["USD"]["percent_change_7d"])), bg="silver", fg= red_green(float(crypto["quote"]["USD"]["percent_change_7d"])))
+        seven_day_change.grid(row=row_count, column=7, sticky =N+S+E+W)
 
         current_value = Label(root, text="${0:.2f}".format(float(current_value)), bg="white")
         current_value.grid(row=row_count, column=8, sticky =N+S+E+W)
