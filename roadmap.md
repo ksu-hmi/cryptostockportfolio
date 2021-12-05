@@ -4,16 +4,16 @@
  - I have found an excellent Python template from https://github.com/huwwp/cryptop which uses an API from cryptocompare.com
  - Added the top ten bitcoin prices that can be used to see the trend for data analysis.
 
-## Build a crypto currency portfolio App with Python
+## Build a crypto currency portfolio App with Python DONE
  - Create functions to add, remove, and update crypto holdings DONE
- - The roadmap will be to build a python App that goes and looks up current pricees of different cryptocurrencies and then output the results on the screen.
+ - The roadmap will be to build a python App that goes and looks up current pricees of different cryptocurrencies and then output the results on the screen. DONE
 
 ### We will do it in a couple of difference ways:
  - (1) From the command line by just using straightup python code DONE
- - (2) Build a GUI Desktop App
+ - (2) Build a GUI Desktop App DONE
  ### Progress: 
- - (1) Created a crypto portfolio using straightup python text format
- - (2) Created a GUI App for the crypto portfolio using Tkinter python inbuild application.
+ - (1) Created a crypto portfolio using straightup python text format DONE
+ - (2) Created a GUI App for the crypto portfolio using Tkinter python inbuild application. DONE
  ### Looking Forward:
  - (1) Discover that the CoinMarketCap.com basic plan API has some endpoint value limitations
  - (2) Will change the API, add more functionality on the GUI App
