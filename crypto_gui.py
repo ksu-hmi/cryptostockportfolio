@@ -1,9 +1,11 @@
-import json
-import pprint
 from tkinter import *
+from tkinter import messagebox
+from tkinter import filedialog
+from tkinter import Menu
 import matplotlib.pyplot as plt
 import sys
 import requests
+from os import path
 
 addcoin = {"1":False}
 my_crypto_portfolio = {}
@@ -21,6 +23,14 @@ class MyPortfolio(Frame):
         self.create_portfolio()
         self.create_bottom()
         self.grid()
+
+        menu = Menu(window)
+        new_item = Menu(menu, tearoff=0)
+        new_item.add_command(label="Open", command= lambda: self.open())
+        new_item.add_command(label="Save As", command= lambda: self.saveport())
+        menu.add_cascade(label="File", menu=new_item)
+        window.config(menu=menu)
+
         window.title("Crypto Currency Portfolio - Total Value: ${0:.2f}".format(float(self.total_current_value)))
         
     def get_api_data(self):
@@ -56,7 +66,7 @@ class MyPortfolio(Frame):
         self.header_current_value = Label(self, text="Current Value", bg="silver", font="Verdana 8 bold")
         self.header_current_value.grid(row=0, column=3, sticky =N+S+E+W)
 
-        self.header_price_paid = Label(self, text="Price Paid", bg="white", font = "Verdana 8 bold")
+        self.header_price_paid = Label(self, text="Price Paid Per", bg="white", font = "Verdana 8 bold")
         self.header_price_paid.grid(row=0, column=4, sticky =N+S+E+W)
 
         self.header_profit_loss_per = Label(self, text="Profit/Loss Per", bg="silver", font = "Verdana 8 bold")
@@ -117,7 +127,7 @@ class MyPortfolio(Frame):
             self.currentvaluelabel = Label(self, text="${0:.2f}".format(float(current_value)), bg="silver")
             self.currentvaluelabel.grid(row=self.rows, column=3, stick=N+S+E+W)
 
-            self.pricepaidper = Label(self, text=paid, bg="white")
+            self.pricepaidper = Label(self, text="${0:.2f}".format(float(paid)), bg="white")
             self.pricepaidper.grid(row=self.rows, column=4, sticky=N+S+E+W)
 
             self.profitlossper = Label(self, text="${0:.2f}".format(float(profit_loss_per_coin)), bg="silver", fg= self.red_green(float(profit_loss_per_coin)))
@@ -132,8 +142,11 @@ class MyPortfolio(Frame):
             self.dailychange = Label(self, text="{0:.2f}%".format(float(daychange)), bg="white", fg= self.red_green(float(daychange)))
             self.dailychange.grid(row=self.rows, column=8, sticky=N+S+E+W)
 
-            self.modifybutton = Button(self, text="Modify", command= lambda rownumber=self.rows, symbol=sym: self.modify(rownumber, symbol))
-            self.modifybutton.grid(row=self.rows, column =10, sticky = W+S, padx=0, pady=0)
+            self.modifybutton = Button(self, text="Modify", command= lambda rownumber = self.rows, symbol=sym: self.modify(rownumber, symbol))
+            self.modifybutton.grid(row=self.rows, column =10, sticky = W+S, padx=45, pady=0)
+
+            self.deletebutton = Button(self, text="Delete", command= lambda symbol=sym: self.delete(symbol))
+            self.deletebutton.grid(row=self.rows, column =10, sticky = E+S, padx=0, pady=0)
 
             self.rows += 1
         
@@ -148,7 +161,7 @@ class MyPortfolio(Frame):
             self.paidentry = Entry(self, font="Verdana 8")
             self.paidentry.grid(row=self.rows, column=4, sticky = N+S+E+W)
 
-            self.savebutton = Button(self, text="Save", command= lambda rownumber=self.rows, symbol=self.symbolentry.get(): self.save(rownumber, symbol))
+            self.savebutton = Button(self, text="Save", command= lambda symbol=self.symbolentry.get(): self.save(symbol))
             self.savebutton.grid(row=self.rows, column =9, sticky = E+S, padx=0, pady=0)
 
             self.rows += 1   
@@ -171,27 +184,38 @@ class MyPortfolio(Frame):
         self.paidentry.grid(row=rownumber, column=4, sticky = N+S+E+W)
         self.paidentry.insert(0, paid)
 
-        self.savebutton = Button(self, text="Save", command= lambda rownumber=self.rows, symbol=sym: self.save(rownumber, symbol))
+        self.savebutton = Button(self, text="Save", command= lambda rownumber=self.rows, symbol=sym: self.save(symbol))
         self.savebutton.grid(row=rownumber, column =9, sticky = E+S, padx=0, pady=0)
 
-    def save(self, rownumber, symbol):
+    def save(self, symbol):
 
         newsymbol = self.symbolentry.get().upper()
         newqty = self.qtyentry.get()
         newpaid = self.paidentry.get()
-        currentprice = 0
+        
         
         if symbol in my_crypto_portfolio:  
             del my_crypto_portfolio[symbol]
-        my_crypto_portfolio[newsymbol] = [newqty, newpaid, currentprice]
+        my_crypto_portfolio[newsymbol] = [newqty, newpaid]
 
         self.savebutton.destroy()
         self.symbolentry.destroy()
         self.qtyentry.destroy()
         self.paidentry.destroy()
 
-        Frame.destroy(self)
-        MyPortfolio(window)
+        self.refresh()
+
+    def delete(self, symbol):
+
+        message = "Are you sure you want to delete " + symbol + " from your portfolio?"
+        response = messagebox.askyesno("Delete Crypto", message)
+
+        if response:
+            del my_crypto_portfolio[symbol]
+        else:
+            pass
+
+        self.refresh()
 
     def create_bottom(self):
 
@@ -222,8 +246,7 @@ class MyPortfolio(Frame):
     def add_coin(self):
 
         addcoin["1"] = True
-        Frame.destroy(self)
-        MyPortfolio(window)
+        self.refresh()
 
     def graph(self, pie, pie_size):
         self.labels = pie
@@ -234,7 +257,34 @@ class MyPortfolio(Frame):
         plt.axis('equal')
         plt.tight_layout()
         plt.show()
+    
+    def open(self):
+        files = [("Text Document", "*.txt")]
+        file = filedialog.askopenfile(mode="r", initialdir= path.dirname(__file__), filetypes=files, defaultextension = files)
+        
+        if file:
+            my_crypto_portfolio.clear()
+            savedportfolio_contents = file.read().splitlines()
+    
+            for line in savedportfolio_contents:
+                entries = line.split()
+                my_crypto_portfolio[entries[0]] = [entries[1], entries[2]]
+            file.close()
+            self.refresh()
+        else:
+            pass
 
+    def saveport(self):
+        files = [("Text Document", "*.txt")]
+        file = filedialog.asksaveasfile(mode="w", initialdir= path.dirname(__file__), filetypes=files, defaultextension = files)
+
+        if file:
+            for crypto in my_crypto_portfolio:
+                lineitem = crypto + " " + str(my_crypto_portfolio[crypto][0]) + " " + str(my_crypto_portfolio[crypto][1]) + "\n"
+                file.writelines(lineitem)
+            file.close()
+        else:
+            pass
 
 window = Tk()
 openapp = MyPortfolio(window)
