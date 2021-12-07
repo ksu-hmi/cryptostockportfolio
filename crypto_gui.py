@@ -7,6 +7,7 @@ import sys
 import requests
 from os import path
 
+
 addcoin = {"1":False}
 my_crypto_portfolio = {}
 
@@ -49,6 +50,27 @@ class MyPortfolio(Frame):
 
         try:
             self.data_raw = r.json()['RAW']
+        except:
+            sys.exit('Could not parse data')
+
+    def does_coin_exist(self, sym):
+        
+        fmt = 'https://min-api.cryptocompare.com/data/pricemultifull?fsyms={}&tsyms=USD&api_key=4120b66bee53ddad00260553cac1215997407f8b2abbdcb714c55a7f3240ed27'
+
+        try:
+            r = requests.get(fmt.format(sym))
+        except requests.exceptions.RequestException:
+            sys.exit('Could not complete request')
+
+        try:
+            data_raw = r.json()
+            if 'Message' in data_raw:
+                return False
+            elif 'PRICE' in data_raw['RAW'][sym]['USD']:
+                return True
+            else:
+                pass
+
         except:
             sys.exit('Could not parse data')
 
@@ -192,8 +214,12 @@ class MyPortfolio(Frame):
         newsymbol = self.symbolentry.get().upper()
         newqty = self.qtyentry.get()
         newpaid = self.paidentry.get()
-        
-        
+
+        if self.does_coin_exist(newsymbol) == False:
+            message = newsymbol + " is not a valid crypto currency symbol."
+            response = messagebox.showerror("Invalid Entry", message)
+            return
+
         if symbol in my_crypto_portfolio:  
             del my_crypto_portfolio[symbol]
         my_crypto_portfolio[newsymbol] = [newqty, newpaid]
