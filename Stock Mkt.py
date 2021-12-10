@@ -10,7 +10,7 @@ import plotly.graph_objs as go
 
 #Interval required 5 minutes
 ticker = input("Enter stock symbol:")
-data = yf.download(tickers=ticker, period='1d', interval='5m')
+data = yf.download(tickers=ticker, period='5d', interval='5m')
 #Print data
 print(data)
 
@@ -25,8 +25,9 @@ fig.add_trace(go.Candlestick(x=data.index,
                 close=data['Close'], name = 'market data'))
 
 # Add titles
+title1 = ticker + " Stock Price History"
 fig.update_layout(
-    title='Tesla Stock Price History',
+    title= ticker + " Stock Price History", 
     yaxis_title='Stock Price (USD per Shares)')
 
 # X-Axes
